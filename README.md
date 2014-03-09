@@ -3,23 +3,23 @@ gocoin-PHP
 
 A PHP client library for the GoCoin API.
 
-
 ## Usage
 
 ```php
- $client = new Client( array(        
-        'client_id' => "",
-        'client_secret' => "",
-        'scope' => "",
-	....
-    ));
+$client = new Client(
+  array(
+    'client_id' => "",
+    'client_secret' => "",
+    'scope' => "",
+  )
+);
 // if need to get access_token
- $client->initToken();
- $b_auth = $client->authorize_api();
+$client->initToken();
+$b_auth = $client->authorize_api();
 
- $user = $client->api->user;
- $user_info = $user->self();
- ...
+$user = $client->api->user;
+$user_info = $user->self();
+...
 ```
 
 ## Methods
@@ -36,7 +36,6 @@ A PHP client library for the GoCoin API.
 ##### $user->request_password_reset(params)
 ##### $user->new_confirmation_email(params)
 ##### $user->reset_password_with_token(params)
-
 
 ### Merchants
 
@@ -63,17 +62,15 @@ A PHP client library for the GoCoin API.
 
 ##### $apps->list(id)
 
-
 ### Invoices
 
 ##### $invoices->create(params)
 ##### $invoices->get(id)
 ##### $invoices->search(params)
 
-
 ### License
 
-Copyright 2013 GoCoin Pte. Ltd.
+Copyright 2014 GoCoin Pte. Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
