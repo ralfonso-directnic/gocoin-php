@@ -62,9 +62,16 @@ class Auth
     $options = array(
       'response_type' => 'code',
       'client_id'     => $this -> client -> options['client_id'],
-      'redirect_uri'  => $this -> client -> get_current_url(),
       'scope'         => $this -> client -> options['scope'],
     );
+    if (array_key_exists('redirect_uri',$this -> client -> options))
+    {
+      $options ['redirect_uri'] = $this -> client -> options['redirect_uri'];
+    }
+    else
+    {
+      $options['redirect_uri'] = $this -> client -> get_current_url();
+    }
     $url = $this -> client -> create_get_url($url, $options);
     return $url;
   }
@@ -87,23 +94,26 @@ class Auth
     }
     else
     {
-      $this->client->setError("Authenticate: grant_type was not defined properly");
+      $this -> client -> setError("Authenticate: grant_type was not defined properly");
       return FALSE;
     }
 
-    $headers = $this->client->default_headers;
-    if ($options['headers'] != null) { $headers = $options['headers']; }
+    $headers = $this -> client -> default_headers;
+    if ($options['headers'] != NULL) { $headers = $options['headers']; }
 
-    $body = $this->build_body($options, $required);
+    $body = $this -> build_body($options, $required);
 
     if ($body == FALSE) { return FALSE; }
+
+    //json encode the body for an auth request
+    $body = json_encode($body);
 
     $config = array(
       'host'    => $options['host'],
       'path'    => $options['path']. "/". $options['api_version'] . "/oauth/token",
       'method'  => "POST",
       'port'    => $this -> client -> port($options['secure']),
-      'headers' => NULL,
+      'headers' => $headers,
       'body'    => $body
     );
 

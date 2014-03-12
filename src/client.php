@@ -45,7 +45,10 @@ class Client
   * 
   * @var array
   */
-  public $default_headers = array('Content-Type' => 'application/json');
+  public $default_headers = array(
+    'Content-Type' => 'application/json',
+    'Cache-Control' => 'no-cache',
+  );
 
   /**
    * options array object
@@ -76,11 +79,21 @@ class Client
   private $error = "";
 
   /**
+   * @return a client object
+   */
+  public static function getInstance($token=NULL)
+  {
+    $instance = new self();
+    $instance -> setToken($token);
+    return $instance;
+  }
+
+  /**
    * Constructor
    * 
    * @param array $options: initial options to use api
    */
-  public function __construct($options)
+  public function __construct($options=NULL)
   {
     if ($options == NULL)
     {
@@ -134,14 +147,25 @@ class Client
     if (isset($_GET['code']))
     {
       $auth_code = $_GET['code'];
-      $options['grant_type'] = "authorization_code";
+      $options['grant_type'] = 'authorization_code';
       $options['code'] = $auth_code;
       $options['client_id'] = $this -> options['client_id'];
       $options['client_secret'] = $this -> options['client_secret'];
-      $options['redirect_uri'] = $this -> get_current_url();
+      if (array_key_exists('redirect_uri',$this -> options))
+      {
+        $options ['redirect_uri'] = $this -> options['redirect_uri'];
+      }
+      else
+      {
+        $options['redirect_uri'] = $this -> get_current_url();
+      }
       $options = $this -> set_default_value($options, $this->options);
       $auth_result = $this -> auth -> authenticate($options);
-      $this -> setToken($auth_result->access_token);
+      if (!$auth_result)
+      {
+        return FALSE;
+      }
+      $this -> setToken($auth_result -> access_token);
     }
     else
     {
@@ -338,7 +362,7 @@ class Client
     );
     //decode the result
     $result = json_decode($result);
-    if (isset($result->error))
+    if (isset($result -> error))
     {
       $this -> setError($result -> error_description);
       return FALSE;
@@ -414,7 +438,7 @@ class Client
    */
   public function get_xrate()
   {
-    $xrate_config['url'] = 'http://x.g0cn.com/prices';
+    $xrate_config['url'] = 'https://x.g0cn.com/prices';
     $xrate_config['method'] = 'GET';
     //perform the request
     $result = $this -> do_request(
@@ -422,10 +446,9 @@ class Client
     );
     //decode the result
     $result = json_decode($result);
-    if (isset($result->error))
+    if (isset($result -> error))
     {
-      $e = new Exception($result->error_description);
-      throw $e;
+      throw new Exception($result -> error_description);
     }
     return $result;
   }
@@ -480,7 +503,7 @@ class Client
 */
 
     $opts[CURLOPT_URL] = $url;
-    $opts[CURLOPT_HEADER] = TRUE;
+    $opts[CURLOPT_HEADER] = FALSE;
     $opts[CURLOPT_SSL_VERIFYPEER] = TRUE;
 
     $curl_header = array();
@@ -507,7 +530,7 @@ class Client
 
     if ($result === FALSE)
     {
-      $this->setError(curl_error($ch));
+      $this -> setError(curl_error($ch));
       curl_close($ch);
       return FALSE;
     }
