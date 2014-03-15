@@ -285,7 +285,7 @@ class GoCoin
   /**
    * @return the accounts for a given merchant
    */
-  public function getAccounts($token,$merchant_id)
+  static public function getAccounts($token,$merchant_id)
   {
     $client = Client::getInstance($token);
     $accounts = $client -> api -> accounts -> getAccounts($merchant_id);
@@ -296,7 +296,7 @@ class GoCoin
   /**
    * @return the transactions that match the given criteria
    */
-  public function getAccountTransactions($token,$account_id,$criteria=NULL)
+  static public function getAccountTransactions($token,$account_id,$criteria=NULL)
   {
     $client = Client::getInstance($token);
     $xactions = $client -> api -> accounts -> getAccountTransactions($account_id,$criteria);
