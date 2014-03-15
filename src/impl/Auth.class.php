@@ -4,11 +4,6 @@
  * GoCoin Api  Auth class
  * include functions related with authentication
  *
- * @author Roman A <future.roman3@gmail.com>
- * @version 0.1.3
- *
- * @author Smith L <smith@gocoin.com>
- * @since  0.1.2
  */
 
 class Auth

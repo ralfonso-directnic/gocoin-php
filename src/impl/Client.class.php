@@ -4,19 +4,8 @@
  * GoCoin Api
  * Client class
  * Main interface to use GoCoin Api
- *
- * @author Aaron L <aaronlabella@gmail.com>
- *
- * @author Roman A <future.roman3@gmail.com>
- * @version 0.1.3
- *
- * @author Smith L <smith@gocoin.com>
- * @since  0.1.2
  * 
  */
-
-require_once('api.php');
-require_once('auth.php');
 
 class Client
 {
@@ -119,7 +108,6 @@ class Client
     $this -> api      = new Api($this);
     $this -> user     = $this -> api -> user;
     $this -> merchant = $this -> api -> merchant;
-    $this -> apps     = $this -> api -> apps;
     $this -> invoices = $this -> api -> invoices;
     $this -> accounts = $this -> api -> accounts;
   }
@@ -258,8 +246,29 @@ class Client
    * Return operation error
    *  @return  String $error
    */
-  public function getError()
+  public function getError($as_is=FALSE)
   {
+    //support returning the error as-is
+    if ($as_is) { return $this -> error; }
+
+    //otherwise, potentially translate it
+    if (is_object($this -> error) && get_class($this -> error) == 'stdClass')
+    {
+      $errors = array();
+      foreach (get_object_vars($this -> error) as $key => $value)
+      {
+        if (is_array($value))
+        {
+          $errors[$key] = implode(',',$value);
+        }
+        else
+        {
+          $errors[$key] = $value;
+        }
+      }
+      $err = implode(',',array_values($errors));
+      return $err;
+    }
     return $this -> error;
   }
 
@@ -353,20 +362,128 @@ class Client
    */
   public function raw_request($config)
   {
+    $DEBUG = FALSE;
+    //$DEBUG = strpos($config['path'], 'confirm') !== FALSE;
+    //$DEBUG = strpos($config['path'], 'merchant') !== FALSE;
+    //$DEBUG = strpos($config['path'], 'payout') !== FALSE;
+    //$DEBUG = strpos($config['path'], 'account') !== FALSE;
+    //$DEBUG = strpos($config['path'], 'user') !== FALSE && $config['method'] == 'DELETE';
+    $DEBUG = strpos($config['path'], 'merchant') !== FALSE && $config['method'] == 'POST';
     $url = $this -> request_client($this -> options['secure']);
     $url = $url . "://" . $config['host'] . $config['path'];
     $headers = $this -> default_headers;
+    $get_response_headers = FALSE;
+    if (array_key_exists('response_headers', $config) && $config['response_headers'])
+    {
+      $get_response_headers = TRUE;
+    }
+    if ($DEBUG)
+    {
+      var_dump('===================== RAW REQUEST =====================');
+      var_dump($url);
+      var_dump($config['method']);
+      var_dump($config['headers']);
+      var_dump($config['body']);
+      var_dump($get_response_headers);
+    }
     //make the request
     $result = $this -> do_request(
-      $url, $config['body'], $config['headers'], $config['method']
+      $url, $config['body'], $config['headers'], $config['method'], $get_response_headers
     );
+    if ($DEBUG)
+    {
+      var_dump($result);
+      var_dump('==========================================');
+    }
+    //make our own json of the HTTP status code and message
+    if ($get_response_headers)
+    {
+      $body = '';
+      $success = FALSE;
+      $append = FALSE;
+      $index = 0;
+      //parse the headers, essentially just grabbing the first one
+      //this loop is here in case we want any others
+      foreach( explode("\r\n", $result) as $header )
+      {
+        //increment our index
+        $index++;
+        //get the status code and message
+        if ($index == 1)
+        {
+          //split on whitespace
+          $fields = preg_split('/\s+/', $header);
+          //remove the first element (ie: HTTP/1.1)
+          array_shift($fields);
+          //shift again to get the HTTP status code
+          $code = array_shift($fields);
+          //implode the message with spaces
+          $msg = implode(' ', $fields);
+          //create a dummy array
+          $data = array('code' => $code, 'message' => $msg);
+          //if its a 'good' status code, just break
+          if ($code == '200' || $code == '204')
+          {
+            //make this as successful
+            $success = TRUE;
+            break;
+          }
+        }
+        //get the location header, in case anyone wants it
+        if ($data['code'] == '301' && strpos($header,'Location:') !== FALSE)
+        {
+          //make this as successful
+          $success = TRUE;
+          $data['location'] = trim(substr($header, 9));
+        }
+        //once we see an empty header, the body is after, per the HTTP protocol
+        if (empty(trim($header))) { $append = TRUE; }
+        //build up the body
+        if ($append)
+        {
+          $body .= $header;
+        }
+      }
+      if (!empty($body))
+      {
+        //try and decode the json body
+        $json = json_decode($body);
+        //if we got json back add the key/value pairs
+        if (!empty($json) && is_object($json) && get_class($json) == 'stdClass')
+        {
+          //add it to the data array we're building
+          foreach ($json as $key => $value)
+          {
+            $data[$key] = $value;
+          }
+        }
+        //otherise, just add the raw body in case anyone wants it
+        else
+        {
+          $data['body'] = $body;
+        }
+      }
+      //set the result and break so we can just decode it again later
+      $result = json_encode($data);
+    }
+
     //decode the result
     $result = json_decode($result);
+
+    //make sure there isn't an error
     if (isset($result -> error))
     {
       $this -> setError($result -> error_description);
       return FALSE;
     }
+    //make sure there isn't an error
+    if (isset($result -> errors))
+    {
+      $this -> setError($result -> errors);
+      return FALSE;
+    }
+
+    //return it
     return $result;
   }
 
@@ -467,7 +584,7 @@ class Client
    *
    * @return Array
    */
-  public function do_request($url, $params=FALSE, $headers, $method="POST")
+  public function do_request($url, $params=FALSE, $headers, $method="POST", $response_headers=FALSE)
   {
     //NOTE: umm ... this is ALWAYS going to be unsset -- why is this here?
     if (!isset($ch)) { $ch = curl_init(); }
@@ -503,7 +620,8 @@ class Client
 */
 
     $opts[CURLOPT_URL] = $url;
-    $opts[CURLOPT_HEADER] = FALSE;
+    if ($response_headers)  { $opts[CURLOPT_HEADER] = TRUE; }
+    else                    { $opts[CURLOPT_HEADER] = FALSE; }
     $opts[CURLOPT_SSL_VERIFYPEER] = TRUE;
 
     $curl_header = array();

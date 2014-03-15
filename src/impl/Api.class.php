@@ -4,18 +4,7 @@
  * GoCoin Api
  * A PHP-based GoCoin client library with a focus on simplicity and ease of integration
  *
- * @author Roman A <future.roman3@gmail.com>
- * @version 0.1.3
- *
- * @author Smith L <smith@gocoin.com>
- * @since  0.1.2
  */
-
-require_once('api/accounts.php');
-require_once('api/apps.php');
-require_once('api/invoices.php');
-require_once('api/merchant.php');
-require_once('api/user.php');
 
 class Api
 {
@@ -23,14 +12,14 @@ class Api
    * Constructor for the API
    * @param Object $client  instance of client
    */
-  public function  __construct($client)
+  public function __construct($client)
   {
-    $this -> client   = $client;
-    $this -> user     = new User($this);
-    $this -> merchant = new Merchant($this);
-    $this -> apps     = new Apps($this);
-    $this -> invoices = new Invoices($this);
-    $this -> accounts = new Accounts($this);
+    $this -> client         = $client;
+    $this -> accounts       = new AccountService($this);
+    $this -> invoices       = new InvoiceService($this);
+    $this -> merchant       = new MerchantService($this);
+    $this -> merchant_users = new MerchantUserService($this);
+    $this -> user           = new UserService($this);
   }
 
   /**
@@ -66,7 +55,7 @@ class Api
     $headers['Authorization'] = "Bearer " . $this -> client -> getToken();
 
     //separated $options & $client_options
-    $client_options = $this->client->options;
+    $client_options = $this -> client -> options;
 
     //tweaked config since method was coming through
     $config = array(
@@ -78,7 +67,13 @@ class Api
       'body'    => $options['body'],
     );
 
-    return $this->client->raw_request($config);
+    //pass through the flag to return the response headers
+    if (array_key_exists('response_headers', $options))
+    {
+      $config['response_headers'] = $options['response_headers'];
+    }
+
+    return $this -> client -> raw_request($config);
   }
 }
 
