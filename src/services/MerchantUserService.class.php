@@ -5,15 +5,6 @@
  *
  */
 
-/*
-#Merchant Users - Manage the users that are associated with a merchant.
-GET /merchants/:id/users Gets a list of all merchant users.
-###PUT /merchants/:merchant_id/users/:user_id Admin-Only: Adds a user to a merchant account.
-  => 404 Not Found
-###DELETE /merchants/:merchant_id/users/:user_id Admin-Only: Deletes a user from a merchant account.
-  => 404 Not Found
-*/
-
 class MerchantUserService
 {
   private $api;

@@ -5,20 +5,6 @@
  *
  */
 
-/*
-#GET /merchants Admin-Only: Gets a list of all merchants.
-#POST /merchants Admin-Only: Adds a new merchant.
-#GET /merchants/:id Gets an existing merchant.
-#PATCH /merchants/:id Updates an existing merchant.
-DELETE /merchants/:id Admin-Only: Deletes an existing merchant.
-###POST /merchants/:merchant_id/payouts Requests a new payout.
-###GET /merchants/:merchant_id/payouts/:id Gets an existing merchant payout.
-###GET /merchants/:merchant_id/payouts Gets a list of all payouts for a merchant.
-###POST /merchants/:merchant_id/currency_conversions Requests a new currency conversion.
-###GET /merchants/:merchant_id/currency_conversions/:id Gets an existing currency_conversion.
-###GET /merchants/:merchant_id/currency_conversions Gets a list of all currency_conversion for a merchant.
-*/
-
 class MerchantService
 {
   private $api;

@@ -5,13 +5,6 @@
  *
  */
 
-/*
-#POST /merchants/:id/invoices Create a new invoice.
-#GET /invoices/:id Gets an invoice.
-#GET /invoices/search?merchant_id=:merchant_id&status=:status&start_time=:start_time&end_time=:end_time&page=:page_number&per_page=:per_page
-      Searches invoices.
-*/
-
 class InvoiceService
 {
   private $api;

@@ -5,21 +5,6 @@
  *
  */
 
-/*
-#GET /users Admin-Only: Gets a list of all users.
-#POST /users Admin-Only: Adds a new user.
-#GET /users/:id Gets an existing user.
-#GET /user Gets resource owner user.
-#PATCH /users/:id Updates an existing user.
-#DELETE /users/:id Admin-Only: Deletes an existing user.
-#PATCH /users/:id/password Changes user password.
-#POST /users/request_password_reset Request password reset.
-#PATCH /users/:id/reset_password/:reset_token Reset password.
-#GET /users/:id/confirm_account/:confirmation_token Confirm user account.
-#POST /users/request_new_confirmation_email Request new confirmation e-mail.
-#GET /users/:user_id/applications
-*/
-
 class UserService
 {
   private $api;

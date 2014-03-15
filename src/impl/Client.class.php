@@ -232,14 +232,14 @@ class Client
    */
   public function getToken()
   {
-    if ($this->token == NULL)
+    if ($this -> token == NULL)
     {
       if (isset($_SESSION['gocoin_access_token']))
       {
         $this -> token = $_SESSION['gocoin_access_token'];
       }
     }
-    return $this->token;
+    return $this -> token;
   }
 
   /**
@@ -363,12 +363,6 @@ class Client
   public function raw_request($config)
   {
     $DEBUG = FALSE;
-    //$DEBUG = strpos($config['path'], 'confirm') !== FALSE;
-    //$DEBUG = strpos($config['path'], 'merchant') !== FALSE;
-    //$DEBUG = strpos($config['path'], 'payout') !== FALSE;
-    //$DEBUG = strpos($config['path'], 'account') !== FALSE;
-    //$DEBUG = strpos($config['path'], 'user') !== FALSE && $config['method'] == 'DELETE';
-    $DEBUG = strpos($config['path'], 'merchant') !== FALSE && $config['method'] == 'POST';
     $url = $this -> request_client($this -> options['secure']);
     $url = $url . "://" . $config['host'] . $config['path'];
     $headers = $this -> default_headers;
