@@ -6,67 +6,148 @@ A PHP client library for the GoCoin API.
 ## Usage
 
 ```php
-$client = new Client(
-  array(
-    'client_id' => "",
-    'client_secret' => "",
-    'scope' => "",
-  )
-);
-// if need to get access_token
-$client->initToken();
-$b_auth = $client->authorize_api();
+require_once(__DIR__.'/src/GoCoin.php');
 
-$user = $client->api->user;
-$user_info = $user->self();
+//get exchange rates
+$exchange = GoCoin::getExchangeRates();
+
+//get current user
+$user = GoCoin::getUser($token);
+...
+
+//admin functions
+require_once(__DIR__.'/src/GoCoinAdmin.php');
+
+//get a list of merchants (admin only function)
+$merchants = GoCoinAdmin::listMerchants($token);
 ...
 ```
-
 ## Methods
 
-### $Users
+```php
+//return the exchange rates
+GoCoin::getExchangeRates()
+```
 
-##### $user->self()
-##### $user->_list()
-##### $user->create(params)
-##### $user->delete(id)
-##### $user->get(id)
-##### $user->update(params)
-##### $user->update_password(params)
-##### $user->request_password_reset(params)
-##### $user->new_confirmation_email(params)
-##### $user->reset_password_with_token(params)
+### User
 
-### Merchants
+```php
+//return a user given an id, or, the current user if id is not provided
+GoCoin::getUser($token,$id=NULL)
 
-##### $merchant->_list()
-##### $merchant->create(params)
-##### $merchant->delete(id)
-##### $merchant->get(id)
-##### $merchant->update(params)
+//return an updated user, after applying updates
+GoCoin::updateUser($token,$user)
 
+//return the user appplications
+GoCoin::getUserApplications($token,$id)
 
-### Apps
+//return a boolean if the password was successfully updated
+GoCoin::updatePassword($token,$id,$password_array)
 
-##### $apps->create(params)
-##### $apps->create_code(params)
-##### $apps->delete(id, )
-##### $apps->delete_authorized(id)
-##### $apps->get(id)
-##### $apps->_list()
-##### $apps->list_authorized()
-##### $apps->update(params)
-##### $apps->new_secret(id)
+//return a boolean if the reset password request went through
+GoCoin::resetPassword($token,$email)
 
-### Accounts
+//return a boolean if the reset password with token request went through
+GoCoin::resetPasswordWithToken($token,$id,$reset_token,$password_array)
 
-##### $apps->list(id)
+//return a boolean if the request confirmation email request went through
+GoCoin::requestConfirmationEmail($token,$email)
+
+//return a boolean if the user confirm was successful
+GoCoin::confirmUser($token,$id,$confirm_token)
+```
+
+### Merchant
+
+```php
+//return a merchant given an id
+GoCoin::getMerchant($token,$id)
+
+//return an updated merchant, after applying updates
+GoCoin::updateMerchant($token,$merchant)
+
+//return the result of requesting a payout
+GoCoin::requestPayout($token,$merchant_id,$amount,$currency='BTC')
+
+//return a list of merchant payouts given a payout id, or, all payouts if id is not provided
+GoCoin::getMerchantPayouts($token,$merchant_id,$payout_id=NULL)
+
+//return the result of requesting a currency conversion
+GoCoin::requestCurrencyConversion(
+  $token,$merchant_id,$amount,$currency='BTC',$target='USD'
+)
+
+//return a list of currency conversions given a conversion id, or, all conversions if id is not provided
+GoCoin::getCurrencyConversions($token,$merchant_id,$conversion_id=NULL)
+```
+
+### Merchant Users
+
+```php
+//return a list of merchant users given a merchant id
+GoCoin::getMerchantUsers($token,$merchant_id)
+```
 
 ### Invoices
 
-##### $invoices->create(params)
-##### $invoices->get(id)
-##### $invoices->search(params)
+```php
+//return the result of creating an invoice
+GoCoin::createInvoice($token,$merchant_id,$invoice)
+
+//return an invoice by id
+GoCoin::getInvoice($token,$id)
+
+//return the invoices that match the given criteria
+GoCoin::searchInvoices($token,$criteria=NULL)
+```
+
+### Accounts
+
+```php
+//return the accounts for a given merchant
+GoCoin::getAccounts($token,$merchant_id)
+
+//return the transactions that match the given criteria
+GoCoin::getAccountTransactions($token,$account_id,$criteria=NULL)
+```
+
+## Admin Methods
+
+### User
+
+```php
+//return a list of users
+GoCoinAdmin::listUsers($token)
+
+//return a created user
+GoCoinAdmin::createUser($token,$user)
+
+//return a boolean representing the successful delete of a user
+GoCoinAdmin::deleteUser($token,$id)
+```
+
+### Merchant
+
+```php
+//return an array of merchants
+GoCoinAdmin::listMerchants($token)
+
+//return an array of merchants
+GoCoinAdmin::createMerchant($token,$merchant)
+
+//return a merchant object after deleting it
+GoCoinAdmin::deleteMerchant($token,$merchant_id)
+```
+
+### Merchant Users
+
+```php
+//return the result of adding a user to a merchant account
+GoCoinAdmin::addMerchantUser($token,$merchant_id,$user_id)
+
+//return the result of deleting a user from a merchant account
+GoCoinAdmin::deleteMerchantUser($token,$merchant_id,$user_id)
+```
 
 ### License
 
