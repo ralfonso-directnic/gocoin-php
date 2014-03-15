@@ -116,13 +116,13 @@ class Client
    * Authorization process
    * @return boolean
    */
-  public function authorize_api()
+  public function authorize_api($code)
   {
     if ($this -> getToken() !== NULL)
     {
       return TRUE;
     }
-    return $this -> get_token_from_request();
+    return $this -> get_token_from_request($code);
   }
 
   /**
@@ -130,16 +130,16 @@ class Client
    * if process is done successfully, return true else return false
    * @return boolean
    */
-  public function get_token_from_request()
+  public function get_token_from_request($code)
   {
-    if (isset($_GET['code']))
+    if (!empty($code))
     {
-      $auth_code = $_GET['code'];
+      $auth_code = $code;
       $options['grant_type'] = 'authorization_code';
       $options['code'] = $auth_code;
       $options['client_id'] = $this -> options['client_id'];
       $options['client_secret'] = $this -> options['client_secret'];
-      if (array_key_exists('redirect_uri',$this -> options))
+      if (array_key_exists('redirect_uri',$this -> options) && !empty($this -> options['redirect_uri']))
       {
         $options ['redirect_uri'] = $this -> options['redirect_uri'];
       }
@@ -154,13 +154,13 @@ class Client
         return FALSE;
       }
       $this -> setToken($auth_result -> access_token);
+      return TRUE;
     }
     else
     {
-      $this -> setError("Can not get authroization code");
+      $this -> setError("Can not get authorization token, empty code");
       return FALSE;
     }
-    return TRUE;
   }
 
   /**
@@ -169,7 +169,6 @@ class Client
    */
   public function initToken()
   {
-    unset($_SESSION['gocoin_access_token']);
     $this -> token = NULL;
   }
 
@@ -222,7 +221,6 @@ class Client
    */
   public function setToken($token)
   {
-    $_SESSION['gocoin_access_token'] = $token;
     $this -> token = $token;
   }
 
@@ -232,13 +230,6 @@ class Client
    */
   public function getToken()
   {
-    if ($this -> token == NULL)
-    {
-      if (isset($_SESSION['gocoin_access_token']))
-      {
-        $this -> token = $_SESSION['gocoin_access_token'];
-      }
-    }
     return $this -> token;
   }
 

@@ -59,7 +59,7 @@ class Auth
       'client_id'     => $this -> client -> options['client_id'],
       'scope'         => $this -> client -> options['scope'],
     );
-    if (array_key_exists('redirect_uri',$this -> client -> options))
+    if (array_key_exists('redirect_uri',$this -> client -> options) && !empty($this -> options['redirect_uri']))
     {
       $options ['redirect_uri'] = $this -> client -> options['redirect_uri'];
     }

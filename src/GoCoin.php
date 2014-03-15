@@ -16,6 +16,50 @@ class GoCoin
   }
 
   /**
+   * @return a url to redirect to request an authorization code, used later for requesting a token
+   */
+  static public function requestAuthorizationCode(
+    $client_id, $client_secret, $scope, $redirect_uri=NULL
+  )
+  {
+    //create a new client without having a token
+    $client = new Client(
+      array(
+        'client_id' => $client_id,
+        'client_secret' => $client_secret,
+        'scope' => $scope,
+        'redirect_uri' => $redirect_uri,  //NOTE: leave this out to use the current URL
+      )
+    );
+    return $client -> get_auth_url();
+  }
+
+  /**
+   * @return an access token given a previously requested authorization code
+   */
+  static public function requestAccessToken(
+    $client_id, $client_secret, $code, $redirect_uri=NULL
+  )
+  {
+    //create a new client without having a token
+    $client = new Client(
+      array(
+        'client_id' => $client_id,
+        'client_secret' => $client_secret,
+        'redirect_uri' => $redirect_uri,  //NOTE: leave this out to use the current URL
+      )
+    );
+    //reset/init any token, just in case
+    $client -> initToken();
+    //authorize the api, ie: get a token
+    if (!$client -> authorize_api($code))
+    {
+      throw new Exception($client -> getError());
+    }
+    return $client -> getToken();
+  }
+
+  /**
    * @return the exchange rates
    */
   static public function getExchangeRates()
