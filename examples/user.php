@@ -25,6 +25,11 @@ $exchange = GoCoin::getExchangeRates();
 //echo an HTML block
 echo '<html><head><title>GoCoin User Test</title></head><body>' . "\n";
 
+//get the current version
+echo '<h3 style="color:blue">Library Version</h3>';
+$version = GoCoin::getVersion();
+echo '<ul><li>' . $version . '</li></ul>';
+
 //show the current exchange
 echo '<h3 style="color:blue">Current Exchange</h3>';
 showObject($exchange);

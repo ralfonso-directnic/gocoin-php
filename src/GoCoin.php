@@ -7,6 +7,16 @@
 
 class GoCoin
 {
+  const VERSION = '0.3';
+
+  /**
+   * @return the version of this client library
+   */
+  static public function getVersion()
+  {
+    return GoCoin::VERSION;
+  }
+
   /**
    * @return a Client object
    */
