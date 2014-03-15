@@ -27,6 +27,13 @@ $merchants = GoCoinAdmin::listMerchants($token);
 ```php
 //return the exchange rates
 GoCoin::getExchangeRates()
+
+//return a url to redirect to request an authorization code,
+//used later for requesting a token
+GoCoin::requestAuthorizationCode($client_id, $client_secret, $scope, $redirect_uri=NULL)
+
+//return an access token given a previously requested authorization code
+GoCoin::requestAccessToken($client_id, $client_secret, $code, $redirect_uri=NULL)
 ```
 
 ### User
