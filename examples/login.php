@@ -1,45 +1,29 @@
 <?php
-    require_once('../src/api.php');
-    require_once('../src/auth.php');
-    require_once('../src/client.php');
 
-    session_start();     
+require_once(__DIR__.'/includes/config.php');
+require_once(__DIR__.'/../src/GoCoin.php');
 
-    /*    
-        Id      : your app client_id
-        Secret  : your app secret id
-        scope   : token scope
-    */
-
-    $headers = array(
-        "'Content-Type' => 'application/json'",
-        "'Content-Type' => 'application/text'"
-    );
-
-    $client = new Client( array(
-        'client_id' => "PLACE_YOUR_CLIENT_ID_HERE",
-        'client_secret' => "PLACE_YOUR_CLIENT_SECRET_HERE",
-        'scope' => "user_read_write invoice_read_write",
-        'redirect_uri' => "PUT_YOUR_URL_HERE",
-        'headers' => $headers
-    ));    
-    
-    $client->initToken();
-    $b_auth = $client->authorize_api();
-
-    if ($b_auth) {
-        $token = $client->getToken();
-        echo "Access Token: ".$token;
-    }  else {
-        echo $client->getError();
-    }
-    
+//request a token if we're been redirected back to here with a code
+if (array_key_exists('code', $_REQUEST))
+{
+  try
+  {
+    $token = GoCoin::requestAccessToken(CLIENT_ID, CLIENT_SECRET, $_REQUEST['code'], REDIRECT_URL);
+    echo '<div><b>Token: </b>' . $token . '</div>' . "\n";
+    echo '<div><b>Scope: </b>' . SCOPE . '</div>' . "\n";
+  }
+  catch (Exception $e)
+  {
+    echo '<div style="color:#aa0000">Error: ' . $e -> getMessage() . '</div>' . "\n";
+  }
+}
+//redirect to the authorization url
+else
+{
+  $auth_url = GoCoin::requestAuthorizationCode(
+    CLIENT_ID, CLIENT_SECRET, SCOPE, REDIRECT_URL
+  );
+  header("Location: $auth_url");
+  return;
+}
 ?>
-
-<html>
-<body>
-    <?php if (!$b_auth) : ?>
-        <a href="<?php echo $client->get_auth_url();?>">Login Go Coin</a>
-    <?php endif;?>    
-</body>
-</html>

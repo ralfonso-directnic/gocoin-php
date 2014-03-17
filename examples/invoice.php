@@ -1,102 +1,82 @@
 <?php
-    require_once('../src/api.php');
-    require_once('../src/auth.php');
-    require_once('../src/client.php');
 
-    session_start();
-                                                                                              
-    /*    
-        Id:    your app client_id
-        Secret:    your app secret id
-        scope: read scope
-    */
+ini_set('display_errors', 1);
 
-    /// sample headers
-    $headers = array(
-        "'Content-Type' => 'application/json'",
-        "'Content-Type' => 'application/text'"
-    );
+//include the config and the gocoin api
+require_once(__DIR__.'/includes/config.php');
+require_once(__DIR__.'/includes/functions.php');
+require_once(__DIR__.'/../src/GoCoin.php');
 
-    $client = new Client( array(        
-        'client_id' => "PLACE_YOUR_CLIENT_ID_HERE",
-        'client_secret' => "PLACE_YOUR_CLIENT_SECRET_HERE",
-        'scope' => "user_read_write invoice_read_write",
-        'headers' => $headers
-    ));    
-    
-    $b_auth = $client->authorize_api();
+//pick a token
+$token = $TOKENS['full_access'];
 
-    // data for invoice creation
-    $my_data = array (
-        "price_currency" => "BTC",
-        "base_price" => 20000,
-        "base_price_currency" => "USD",
-        "confirmations_required" => 6,
-        "notification_level" => "all"
-    );
+//echo an HTML block
+echo '<html><head><title>GoCoin Invoice Test</title></head><body>' . "\n";
 
-    $data_string = json_encode($my_data);
+echo '<h3 style="color:blue">All Invoices</h3>';
 
+//search invoices with no criteria, returns all of em
+$invoices = GoCoin::searchInvoices($token);
+if (!empty($invoices) && property_exists($invoices, 'invoices'))
+{
+  echo '<ul>' . "\n";
+  foreach($invoices -> invoices as $invoice)
+  {
+    echo '  <li>';
+    echo '<b>Id:</b> ' . $invoice -> id;
+    echo ' (created at ' . $invoice -> created_at . ')';
+    echo '</li>'. "\n";
+  }
+  echo '</ul>' . "\n";
+}
 
-    if ($b_auth) {
-        // retrieve user details
-        $user = $client->api->user->self();
-        if (!$user) {
-            echo $client->getError();
-        }
+//example search criteria array
+$criteria = array(
+  'merchant_id' => MERCHANT_ID,
+  //'status' => $status,
+  'start_time' =>  '2014-03-14T00:00:00.000Z',
+  //'end_time' => $end_time,
+  //'page' => $page_number,
+  'per_page' => 10,
+);
 
-        // get an invoice by id
-        // $get_my_invoice = $client->api->invoices->get("PUT_YOUR_INVOICE_ID_HERE");
+echo '<hr/>' . "\n";
+echo '<h3 style="color:blue">Recent Invoices</h3>';
 
-        // search invoice - no params returns all avail
-        //$fake_params = array();
-        //$search_my_invoices = $client->api->invoices->search($fake_params);
+//search invoices with criteria
+$invoices = GoCoin::searchInvoices($token,$criteria);
+if (!empty($invoices) && property_exists($invoices, 'invoices'))
+{
+  foreach($invoices -> invoices as $invoice)
+  {
+    showObject($invoice);
+    echo '<hr/>' . "\n";
+  }
+}
 
+echo '<h3 style="color:blue">Specific Invoices</h3>';
 
-        // stick merchant id into params for invoice creation
-        $invoice_params = array(
-            'id' => $user->merchant_id,
-            'data' => $data_string
-        );
-        
-        if (!$invoice_params) {
-            echo $client->getError();
-        }
+//get a specific invoice
+$specific = GoCoin::getInvoice($token,INVOICE_ID);
+showObject($invoice);
 
-        // create an invoice
-        $my_invoice = $client->api->invoices->create($invoice_params);
-    } else {
-        echo $client->getError();
-    }
+$NEW_INVOICE = FALSE;
+if ($NEW_INVOICE)
+{
+  echo '<hr/>' . "\n";
+  echo '<h3 style="color:blue">New Invoice</h3>';
+  //create a new invoice
+  $new_invoice = array(
+    'price_currency' => 'BTC',
+    'base_price' => '456.00',
+    'base_price_currency' => 'USD',
+    'notification_level' => 'all',
+    'confirmations_required' => 5,
+  );
+  $new_invoice = GoCoin::createInvoice($token,MERCHANT_ID,$new_invoice);
+  //var_dump($new_invoice);
+  showObject($new_invoice);
+}
 
-
-
-?>
-
-<html>
-<body>
-
-    <?php if ($my_invoice) : ?>
-        <ul>
-            <li>Invoice Id : &nbsp;&nbsp;<?php echo $my_invoice->id?></li>
-            <li>Status : &nbsp;&nbsp;<?php echo $my_invoice->status?></li>
-            <li>Payment Address : &nbsp;&nbsp;<?php echo $my_invoice->payment_address?></li>
-            <li>Price : &nbsp;&nbsp;<?php echo $my_invoice->price?></li>
-            <li>Price Currency : &nbsp;&nbsp;<?php echo $my_invoice->price_currency?></li>
-            <li>Base Price : &nbsp;&nbsp;<?php echo $my_invoice->base_price?></li>
-            <li>Base Price Currency : &nbsp;&nbsp;<?php echo $my_invoice->base_price_currency?></li>
-        </ul>
-    <?php endif;?>
-
-    <br><br><br>
-
-    <?php if ($user) : ?>
-    <ul>
-        <li>User Id : &nbsp;&nbsp;<?php echo $user->id?></li>
-        <li>User Email : &nbsp;&nbsp;<?php echo $user->email?></li>
-        <li>Name : &nbsp;&nbsp;<?php echo $user->first_name?>&nbsp;<?php echo $user->last_name?></li>
-        <li>Merchant Id :&nbsp;&nbsp;<?php echo $user->merchant_id?></li>
-    </ul>
-    <?php endif;?>
-</body>
-</html>
+//close our HTML block
+echo '</body></html>' . "\n";
