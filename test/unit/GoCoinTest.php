@@ -4,29 +4,42 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 {
   const EXPECTED_LIBRARY_VERSION = '0.4';
   const AUTH_CODE = '45a717d1b40a35c0a1ea4aed638f20eb94add2763a951a81ac421005cdb56d6d';
+  const MINIMAL_TEST = TRUE;
 
   private $testMethods = NULL;
 
   public function setUp()
   {
-    $this -> testMethods = array(
-      'testDoNothing',
-      'testSettings',
-      'testExchange',
-      'testAuthUrl',
-      //'testGetToken',
-      'testGetSelf',
-      'testGetUser',
-      //'testUpdateUser',
-      //'testPassword',
-      'testGetAccounts',
-      'testGetInvoices',
-      'testGetMerchant',
-      //'testUpdateMerchant',
-      //'testGetMerchantPayouts',
-      //'testGetMerchantConversions',
-      //'testGetMerchantUsers',
-    );
+    if (GoCoinTest::MINIMAL_TEST)
+    {
+      $this -> testMethods = array(
+        'testDoNothing',
+        'testSettings',
+        'testExchange',
+        'testAuthUrl',
+      );
+    }
+    else
+    {
+      $this -> testMethods = array(
+        'testDoNothing',
+        'testSettings',
+        'testExchange',
+        'testAuthUrl',
+        //'testGetToken',
+        'testGetSelf',
+        'testGetUser',
+        //'testUpdateUser',
+        //'testPassword',
+        'testGetAccounts',
+        'testGetInvoices',
+        'testGetMerchant',
+        //'testUpdateMerchant',
+        //'testGetMerchantPayouts',
+        //'testGetMerchantConversions',
+        //'testGetMerchantUsers',
+      );
+    }
   }
 
   public function doTest($testMethodName)
