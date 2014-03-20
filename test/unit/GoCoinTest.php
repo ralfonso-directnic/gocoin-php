@@ -2,7 +2,7 @@
 
 class GoCoinTest extends PHPUnit_Framework_TestCase
 {
-  const EXPECTED_LIBRARY_VERSION = '0.4';
+  const EXPECTED_LIBRARY_VERSION = '0.5';
   const AUTH_CODE = '45a717d1b40a35c0a1ea4aed638f20eb94add2763a951a81ac421005cdb56d6d';
   const MINIMAL_TEST = TRUE;
 
@@ -17,6 +17,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
         'testSettings',
         'testExchange',
         'testAuthUrl',
+        //'testGetSelf',
       );
     }
     else
@@ -72,24 +73,24 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
     echo '[DEBUG]: DASHBOARD URL: ' . $client -> options['dashboard_host'] . "\n";
 
     //assertions
-    $this -> assertStringEndsWith('llamacoin.com', $client -> options['host']);
-    $this -> assertStringEndsWith('llamacoin.com', $client -> options['dashboard_host']);
+    $this -> assertEquals($client -> options['host'], GoCoin::PRODUCTION_HOST);
+    $this -> assertEquals($client -> options['dashboard_host'], GoCoin::PRODUCTION_DASHBOARD_HOST);
 
-    //verify production settings
-    $mode = GoCoin::setApiMode('production');
+    //verify test settings
+    $mode = GoCoin::setApiMode('test');
     $client = GoCoin::getClient(TOKEN);
     echo '[WARNING]: ==== Settings for [' . $mode . "] ====\n";
     echo '[DEBUG]: API URL: ' . $client -> options['host'] . "\n";
     echo '[DEBUG]: DASHBOARD URL: ' . $client -> options['dashboard_host'] . "\n";
 
     //assertions
-    $this -> assertEquals($client -> options['host'], GoCoin::PRODUCTION_HOST);
-    $this -> assertEquals($client -> options['dashboard_host'], GoCoin::PRODUCTION_DASHBOARD_HOST);
+    $this -> assertEquals($client -> options['host'], GoCoin::TEST_HOST);
+    $this -> assertEquals($client -> options['dashboard_host'], GoCoin::TEST_DASHBOARD_HOST);
 
     //make sure we're at the expected client library version
     $this -> assertEquals($version, GoCoinTest::EXPECTED_LIBRARY_VERSION);
 
-    //put the mode back to test for the rest of the tests
+    //make sure to put the mode back to test for the rest of the tests
     $mode = GoCoin::setApiMode('test');
   }
 
@@ -128,6 +129,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
     echo '[DEBUG]: API MODE:' . GoCoin::getApiMode() . "\n";
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
     //get the current user
     $user = GoCoin::getUser(TOKEN);
     //perform assertion
@@ -140,6 +142,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
     if (!$this -> doTest(__FUNCTION__)) { return; }
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
     //get the current user
     $user = GoCoin::getUser(TOKEN, USER_ID);
     //perform assertion
@@ -153,6 +156,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //get the current user
     $user = GoCoin::getUser(TOKEN, USER_ID);
@@ -201,6 +205,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //an array to update the password
     $pw_array = array(
@@ -232,6 +237,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //get accounts for this merchant
     $accounts = GoCoin::getAccounts(TOKEN,MERCHANT_ID);
@@ -259,6 +265,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //search invoices with no criteria, returns all of em
     $invoices = GoCoin::searchInvoices(TOKEN);
@@ -296,6 +303,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //get a merchant
     $merchant = GoCoin::getMerchant(TOKEN,MERCHANT_ID);
@@ -310,6 +318,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //get a merchant
     $merchant = GoCoin::getMerchant(TOKEN,MERCHANT_ID);
@@ -356,6 +365,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //get all payouts
     $payouts = GoCoin::getMerchantPayouts(TOKEN,MERCHANT_ID);
@@ -370,6 +380,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     $conversions = GoCoin::getCurrencyConversions(TOKEN,MERCHANT_ID);
     //var_dump($conversions);
@@ -383,6 +394,7 @@ class GoCoinTest extends PHPUnit_Framework_TestCase
 
     //perform assertion
     $this -> assertEquals(GoCoin::getApiMode(), 'test');
+    $this -> assertNotEmpty(TOKEN);
 
     //get a list of all merchant users
     $users = GoCoin::getMerchantUsers(TOKEN,MERCHANT_ID);

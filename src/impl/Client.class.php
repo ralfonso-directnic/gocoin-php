@@ -17,8 +17,8 @@ class Client
   private $default_options = array(
     'client_id' => NULL,
     'client_secret' =>NULL,
-    'host' => 'api.llamacoin.com',
-    'dashboard_host' => 'dashboard.llamacoin.com',
+    'host' => GoCoin::PRODUCTION_HOST,
+    'dashboard_host' => GoCoin::PRODUCTION_DASHBOARD_HOST,
     'port' => NULL,
     'path' => '/api',
     'api_version' => 'v1',
