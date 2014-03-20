@@ -7,7 +7,7 @@
 
 class GoCoin
 {
-  const VERSION = '0.3';
+  const VERSION = '0.4';
 
   //production hostnames
   const PRODUCTION_HOST = "api.gocoin.com";
