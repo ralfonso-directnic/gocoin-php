@@ -20,6 +20,15 @@ require_once(__DIR__.'/src/GoCoinAdmin.php');
 
 //get a list of merchants (admin only function)
 $merchants = GoCoinAdmin::listMerchants($token);
+
+//NOTE: by default, the GoCoin class points to the development server
+//below is an example of how to switch to production mode
+
+//switch to production mode
+$mode = GoCoin::setApiMode('production');
+
+//get an invoice (from production)
+$invoice = GoCoin::getInvoice($token,$invoice_id);
 ...
 ```
 ## Methods

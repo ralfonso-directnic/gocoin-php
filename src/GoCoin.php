@@ -9,6 +9,12 @@ class GoCoin
 {
   const VERSION = '0.3';
 
+  //production hostnames
+  const PRODUCTION_HOST = "api.gocoin.com";
+  const PRODUCTION_DASHBOARD_HOST = "dashboard.gocoin.com";
+
+  static private $API_MODE = 'test';
+
   /**
    * @return the version of this client library
    */
@@ -18,11 +24,34 @@ class GoCoin
   }
 
   /**
+   * @return the api mode
+   */
+  static public function getApiMode()
+  {
+    return GoCoin::$API_MODE;
+  }
+
+  /**
+   * @return set the api mode
+   */
+  static public function setApiMode($mode='test')
+  {
+    GoCoin::$API_MODE = $mode;
+    return GoCoin::getApiMode();
+  }
+
+  /**
    * @return a Client object
    */
   static public function getClient($token)
   {
-    return Client::getInstance($token);
+    $client = Client::getInstance($token);
+    if (GoCoin::getApiMode() == 'production')
+    {
+      $client -> options['host'] = GoCoin::PRODUCTION_HOST;
+      $client -> options['dashboard_host'] = GoCoin::PRODUCTION_DASHBOARD_HOST;
+    }
+    return $client;
   }
 
   /**
@@ -404,7 +433,7 @@ function GoCoinAutoload($class_name)
       }
     }
   }
-  die("[ERROR]: class [$class_name] cannot be auto loaded!");
+  //die("[ERROR]: class [$class_name] cannot be auto loaded!");
 }
 
 if (version_compare(PHP_VERSION, '5.3.0', '>='))

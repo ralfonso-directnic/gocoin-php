@@ -15,7 +15,7 @@ echo '<html><head><title>GoCoin Account Test</title></head><body>' . "\n";
 
 echo '<h3 style="color:blue">Merchant Accounts</h3>';
 
-//search invoices with criteria
+//get accounts for this merchant
 $accounts = GoCoin::getAccounts($token,MERCHANT_ID);
 if (!empty($accounts))
 {
@@ -39,7 +39,7 @@ if (!empty(ACCOUNT_ID))
   echo '<h3 style="color:blue">Account Transactions</h3>';
 
   //search transactions with criteria
-  $xactions = GoCoin::getAccountTransactions($token,ACCOUNT_ID);
+  $xactions = GoCoin::getAccountTransactions($token,ACCOUNT_ID,$criteria);
   //var_dump($xactions);
   if (!empty($xactions) && $xactions -> paging_info -> total > 0)
   {

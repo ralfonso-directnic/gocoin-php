@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpdox xmlns="http://phpdox.net/config">
+  <project name="GoCoin PHP"
+    source="${basedir}/../src" workdir="${basedir}/../target/phpdox">
+    <collector publiconly="false">
+      <include mask="*.php" />
+      <exclude mask="*AutoLoader.php" />
+    </collector>
+    <generator output="${basedir}/../target">
+      <enrich base="${basedir}/../target/logs">
+          <source type="build" />
+          <source type="git">
+              <history enabled="true" limit="15" />
+          </source>
+          <source type="checkstyle" />
+          <source type="pmd" />
+          <source type="phploc" />
+      </enrich>
+      <build engine="html" enabled="true" output="api"/>
+      <build engine="xml" enabled="true" output="xml" />
+      <build engine="todo" enabled="false" output="todo">
+          <file name="todolist.txt" encoding="utf-8" />
+      </build>
+      <build engine="graph" enabled="false" output="graph" />
+    </generator>
+  </project>
+</phpdox>

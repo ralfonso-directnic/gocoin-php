@@ -1,3 +1,9 @@
-/examples/admin/test.php
-/examples/includes/config.php
-/examples/includes/config_api.php
+examples/admin/test.php
+examples/includes/config.php
+examples/includes/config_api.php
+target/
+test/unit/config.php
+test/unit/config_api.php
+t
+results.sh
+cache.properties

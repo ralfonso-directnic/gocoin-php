@@ -23,7 +23,7 @@ showObject($merchant,FALSE);
 $UPDATE = FALSE;
 if ($UPDATE)
 {
-    //create an array of fields to update, NOTE: id is required
+  //create an array of fields to update, NOTE: id is required
   $name = $merchant -> name;
   $updates = array(
     'id' => $merchant -> id,
