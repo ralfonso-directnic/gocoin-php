@@ -17,8 +17,8 @@ class Client
   private $default_options = array(
     'client_id' => NULL,
     'client_secret' =>NULL,
-    'host' => 'api.llamacoin.com',
-    'dashboard_host' => 'dashboard.llamacoin.com',
+    'host' => GoCoin::PRODUCTION_HOST,
+    'dashboard_host' => GoCoin::PRODUCTION_DASHBOARD_HOST,
     'port' => NULL,
     'path' => '/api',
     'api_version' => 'v1',
@@ -354,6 +354,7 @@ class Client
   public function raw_request($config)
   {
     $DEBUG = FALSE;
+    //$DEBUG = strpos($config['path'], '/users') !== FALSE;
     $url = $this -> request_client($this -> options['secure']);
     $url = $url . "://" . $config['host'] . $config['path'];
     $headers = $this -> default_headers;
@@ -510,7 +511,7 @@ class Client
 
   /**
    * create_get_url
-   * Create complete url for GET method with auth parameters     
+   * Create complete url for GET method with auth parameters
    * @param String $url The base URL for api
    * @param Array $params The parameters to pass to the URL
    * @return string
@@ -521,7 +522,7 @@ class Client
     {
       foreach($params as $param_name => $param_value)
       {
-        $arr_params[] = "$param_name=" . $param_value;
+        $arr_params[] = "$param_name=" . urlencode($param_value);
       }
       $str_params = implode('&',$arr_params);
       //$str_params = http_build_query($params);

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpdox xmlns="http://phpdox.net/config">
+  <project name="GoCoin PHP Tests"
+      source="${basedir}/../test"
+      workdir="${basedir}/../target/phpdox-test">
+    <collector publiconly="false">
+      <include mask="*.php" />
+      <exclude mask="*AutoLoader.php" />
+    </collector>
+    <generator output="${basedir}/../target">
+      <build engine="html" enabled="true" output="api-test"/>
+    </generator>
+  </project>
+</phpdox>

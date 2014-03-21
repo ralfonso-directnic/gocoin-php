@@ -55,6 +55,7 @@ class UserService
     $options = array(
       'method' => 'PATCH',
       'body' => json_encode($user),
+      'response_headers' => FALSE,
     );
     return $this -> api -> request($route, $options);
   }
