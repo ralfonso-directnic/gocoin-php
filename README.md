@@ -165,6 +165,41 @@ GoCoinAdmin::addMerchantUser($token,$merchant_id,$user_id)
 GoCoinAdmin::deleteMerchantUser($token,$merchant_id,$user_id)
 ```
 
+## Running the unit tests
+
+
+**NOTE:** ANT must be installed and on your PATH
+
+**NOTE:** PHPUnit must be installed and on your PATH
+
+**NOTE:** you may have to fill in the TEST_HOST and TEST_DASHBOARD_HOST constants in *src/GoCoin.php*
+
+- execute the ANT target phpunit, ie: ant phpunit
+
+**NOTE:** On the first execution, it will *copy test/unit/config_test.php* into *test/unit/config.php*.
+It was also run a minimal test that does NOT require any client id, secret, tokens, etc.
+
+- define the following variables in config.php:
+
+  - CLIENT_ID
+  - CLIENT_SECRET
+  - TOKEN
+  - USER_ID
+  - MERCHANT_ID
+  - INVOICE_ID
+  - ACCOUNT_ID
+  - MERCHANT_USER_ID
+
+**NOTE:** If you do not know the respective ids, you can use the API to get them
+
+- Change the constant *MINIMAL_TEST* to FALSE in test/unit/GoCoin.php
+
+- execute the ANT target phpunit, ie: ant phpunit
+
+**NOTE:** To execute the full ANT script, for full continuous integration and static analysis, you must install all the PHP tools as listed here, ie: phpmd, phpDox, etc.
+
+  - http://jenkins-php.org/
+
 ### License
 
 Copyright 2014 GoCoin Pte. Ltd.
