@@ -13,8 +13,8 @@ class GoCoin
   const PRODUCTION_HOST = "api.gocoin.com";
   const PRODUCTION_DASHBOARD_HOST = "dashboard.gocoin.com";
 
-  const TEST_HOST = "api.llamacoin.com";
-  const TEST_DASHBOARD_HOST = "dashboard.llamacoin.com";
+  const TEST_HOST = "";
+  const TEST_DASHBOARD_HOST = "";
 
   static private $API_MODE = 'production';
 
