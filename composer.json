@@ -1,5 +1,5 @@
 {
-    "name": "gocoin-php",
+    "name": "gocoin/gocoin-php",
     "description": "PHP Library for GoCoin Payment Processing",
     "homepage": "gocoin.com",
     "license": "Apache",
