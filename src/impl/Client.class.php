@@ -416,14 +416,15 @@ class Client
           }
         }
         //get the location header, in case anyone wants it
-        if ($data['code'] == '301' && strpos($header,'Location:') !== FALSE)
+        if (($data['code'] == '301') && (strpos($header,'Location:') !== FALSE))
         {
           //make this as successful
           $success = TRUE;
           $data['location'] = trim(substr($header, 9));
         }
         //once we see an empty header, the body is after, per the HTTP protocol
-        if (empty(trim($header))) { $append = TRUE; }
+        $htest = trim($header);
+        if (empty($htest)) { $append = TRUE; }
         //build up the body
         if ($append)
         {
