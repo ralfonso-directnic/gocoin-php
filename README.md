@@ -1,7 +1,7 @@
 gocoin-PHP
 ===========
 
-A PHP client library for the GoCoin API.
+A PHP client library for the GoCoin API. Recommended: PHP version >= 5.3
 
 ## Usage
 
@@ -177,7 +177,7 @@ GoCoinAdmin::deleteMerchantUser($token,$merchant_id,$user_id)
 - execute the ANT target phpunit, ie: ant phpunit
 
 **NOTE:** On the first execution, it will *copy test/unit/config_test.php* into *test/unit/config.php*.
-It was also run a minimal test that does NOT require any client id, secret, tokens, etc.
+It will also run a minimal test that does NOT require any client id, secret, tokens, etc.
 
 - define the following variables in config.php:
 
@@ -192,7 +192,7 @@ It was also run a minimal test that does NOT require any client id, secret, toke
 
 **NOTE:** If you do not know the respective ids, you can use the API to get them
 
-- Change the constant *MINIMAL_TEST* to FALSE in test/unit/GoCoin.php
+- Change the constant *MINIMAL_TEST* to FALSE in test/unit/GoCoinTest.php
 
 - execute the ANT target phpunit, ie: ant phpunit
 
