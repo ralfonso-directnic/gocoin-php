@@ -1,7 +1,7 @@
 {
     "name": "gocoin/gocoin-php",
     "description": "PHP Library for GoCoin Payment Processing",
-    "homepage": "gocoin.com",
+    "homepage": "http://www.gocoin.com",
     "license": "Apache",
     "require": {
         "php": ">=5.3.0",
