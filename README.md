@@ -1,7 +1,7 @@
 gocoin-PHP
 ===========
 
-A PHP client library for the GoCoin API.
+A PHP client library for the GoCoin API. Recommended: PHP version >= 5.3
 
 ## Usage
 
