@@ -105,8 +105,13 @@ GoCoin::getMerchantUsers($token,$merchant_id)
 ```
 
 ### Invoices
-
 ```php
+//get current user first
+
+$user = GoCoin::getUser($token);
+
+$merchant_id = $user->merchant_id;
+
 //return the result of creating an invoice
 GoCoin::createInvoice($token,$merchant_id,$invoice)
 
